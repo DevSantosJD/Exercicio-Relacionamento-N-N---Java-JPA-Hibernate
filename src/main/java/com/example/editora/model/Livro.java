@@ -2,12 +2,11 @@ package com.example.editora.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "tb_livrosx")
+@Table(name = "tb_livros")
 @Data
 public class Livro {
 
@@ -18,15 +17,14 @@ public class Livro {
     private String name;
 
     @ManyToMany
-    @JoinTable(name = "livr0_autor",
+    @JoinTable(name = "livro_autor",
                joinColumns = @JoinColumn(name = "livro_id"),
                inverseJoinColumns = @JoinColumn(name = "autor_id"))
-    private Set<Autor> autores = new HashSet<>();
+    private Set<Autor> autores;
 
     public Livro(){}
 
     public Livro(String name){
         this.name = name;
     }
-
 }
