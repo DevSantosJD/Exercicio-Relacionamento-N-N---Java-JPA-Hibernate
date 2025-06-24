@@ -1,7 +1,11 @@
 package com.example.editora.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,11 +20,14 @@ public class Livro {
 
     private String name;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToMany
     @JoinTable(name = "livro_autor",
                joinColumns = @JoinColumn(name = "livro_id"),
                inverseJoinColumns = @JoinColumn(name = "autor_id"))
-    private Set<Autor> autores;
+    @JsonManagedReference
+    private Set<Autor> autores = new HashSet<>();
 
     public Livro(){}
 

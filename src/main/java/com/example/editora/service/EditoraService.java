@@ -7,6 +7,8 @@ import com.example.editora.repository.LivroRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -44,12 +46,13 @@ public class EditoraService {
     // Vincular autor a livro
     public void vincularAutorLivro(Long autorId, Long livroId){
         Autor autor = autorRepository.findById(autorId)
-                .orElseThrow(()-> new RuntimeException("Autor não encontrado"));
+                .orElseThrow(()-> new EntityNotFoundException("Autor não encontrado"));
+
 
         Livro livro = livroRepository.findById(livroId)
-                .orElseThrow(()-> new RuntimeException("Livro não encontrado"));
+                .orElseThrow(()-> new EntityNotFoundException("Livro não encontrado"));
 
-        // verifica se
+        // verifica se Livro possui autores, se esta vazia
         if(!livro.getAutores().contains(autor)) {
 
             //Atualiza autor e livro
@@ -58,6 +61,8 @@ public class EditoraService {
 
             livroRepository.save(livro);
             autorRepository.save(autor);
+
+
         }
 
     }
@@ -84,13 +89,33 @@ public class EditoraService {
     // Buscar livro por autor(Id)
 
     public Page<Livro> buscarLivroPorAutor(Long autorId, Pageable pageable){
+        Autor autor = autorRepository.findById(autorId)
+                .orElseThrow(()-> new EntityNotFoundException("Autor não encontrado com o ID: " + autorId));
         return livroRepository.findByAutoresId(autorId, pageable);
     }
 
     // Buscar livro por nome do autor
     public Page<Livro> buscarLivrosPorNomeAutor(String nomeAutor, Pageable pageable){
-        Autor autor = autorRepository.findByNome(nomeAutor)
-                .orElseThrow(()-> new EntityNotFoundException("Autor não encontrado"));
+        Autor autor = autorRepository.findByName(nomeAutor)
+                .orElseThrow(()-> new EntityNotFoundException("Autor não encontrado " + nomeAutor +"não foi encontrado"));
         return livroRepository.findByAutoresId(autor.getId(), pageable);
+    }
+
+    // Retorna livro por nome
+    public Optional<Livro> buscarLivroPorNome(String nameLivro){
+        Livro livro = livroRepository.findByName(nameLivro)
+                .orElseThrow(()-> new EntityNotFoundException("O livro " + nameLivro + " não foi encontrado"));
+
+        return livroRepository.findByName(nameLivro);
+    }
+
+    //Remover autor
+    public void apagarAutor(Long autorId){
+        autorRepository.deleteById(autorId);
+    }
+
+    //Remover livro
+    public void apagarLivro(Long livroId){
+        livroRepository.deleteById(livroId);
     }
 }

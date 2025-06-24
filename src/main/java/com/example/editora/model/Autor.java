@@ -1,14 +1,17 @@
 package com.example.editora.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "tb_atuores")
+@Table(name = "tb_autores")
 @Data
 public class Autor {
 
@@ -25,7 +28,10 @@ public class Autor {
     @Column(unique = true)
     private String cpf;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "autores")
+    @JsonBackReference
     private Set<Livro> livros = new HashSet<>();
 
     public Autor(){}
